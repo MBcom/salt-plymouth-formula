@@ -15,6 +15,13 @@ A SaltStack formula to configure Plymouth boot splash screen with custom themes.
   - Message display support
   - Configurable background colors
 
+### Example: MBcom example theme and customization Note
+![MBcom Example Theme](./docs/mbcom-theme.gif)  
+  
+The "mbcom" theme provided in this formula is just an example to demonstrate the structure and functionality of a Plymouth theme. You can use it as a starting point to create your own custom theme. Refer to the [Creating Custom Themes](#creating-custom-themes) section for detailed instructions. 
+
+**Important:** You are not permitted to use the [@MBcom](https://github.com/MBcom) logo/ profile image in your custom themes. Replace it with your own logo or design assets.
+
 ## Configuration
 
 The formula can be configured through pillar data. Default settings are:
