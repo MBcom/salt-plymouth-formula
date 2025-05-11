@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=mbcom
+Description=Displays a mbcom branded screen during boot.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/mbcom
+ScriptFile=/usr/share/plymouth/themes/mbcom/custom-splash.script

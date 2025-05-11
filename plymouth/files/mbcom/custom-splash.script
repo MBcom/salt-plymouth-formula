@@ -1,0 +1,86 @@
+# --- Helper function to load images ---
+fun LoadImage(filename) {
+  path_prefix = "/usr/share/plymouth/themes/mbcom/"; // Default path for theme images
+  image = Image(path_prefix + filename); // Attempt to load the image from the default path
+  if (!image) {
+     image = Image(filename); // Fallback to loading the image from the current directory
+     if (!image) {
+       Plymouth.WriteError("Failed to load image: " + filename + "\n"); // Log an error if the image cannot be loaded
+     }
+  }
+  return image; // Return the loaded image or NULL if loading failed
+}
+
+# --- Global variables for message sprites ---
+message_sprites = []; // Array to store message sprites
+message_sprite_count = 0; // Counter for the number of message sprites
+message_sprite_y = 10; // Initial Y position for message sprites
+
+# --- Set the background colors ---
+Window.SetBackgroundTopColor(0, 0, 0); // Set the top background color to black
+Window.SetBackgroundBottomColor(0, 0, 0); // Set the bottom background color to black
+
+# --- Load and display the logo ---
+logo.image = LoadImage("logo.png"); // Load the logo image
+logo.sprite = Sprite(logo.image); // Create a sprite for the logo
+logo.sprite.SetX(((Window.GetX() + Window.GetWidth()) / 2) - (logo.image.GetWidth() / 2)); // Center the logo horizontally
+logo.sprite.SetY(((Window.GetY() + Window.GetHeight()) / 2) - (logo.image.GetHeight() / 2)); // Center the logo vertically
+logo.sprite.SetOpacity(1); // Set the opacity of the logo to fully visible
+
+# --- Load and position the progress box ---
+progress_box.image = LoadImage("progress-box.png"); // Load the progress box image
+progress_box.sprite = Sprite(progress_box.image); // Create a sprite for the progress box
+progress_box.x = Window.GetX() + (Window.GetWidth() / 2) - (progress_box.image.GetWidth() / 2); // Center the progress box horizontally
+progress_box.y = Window.GetY() + (Window.GetHeight() * 0.85) - (progress_box.image.GetHeight() / 2); // Position the progress box at 120% of the window height
+progress_box.sprite.SetPosition(progress_box.x, progress_box.y, 0); // Set the position of the progress box sprite
+
+# --- Load and position the progress bar ---
+progress_bar.original_image = LoadImage("progress-bar.png"); // Load the progress bar image
+progress_bar.sprite = Sprite(); // Create an empty sprite for the progress bar
+progress_bar.sprite.SetPosition(progress_box.x, progress_box.y, 1); // Set the position of the progress bar sprite
+
+# --- Callback function to update the progress bar ---
+fun progress_callback(duration, progress) {
+    if (progress_bar.image.GetWidth() != Math.Int(progress_bar.original_image.GetWidth() * progress)) {
+        // Scale the progress bar image based on the progress value
+        progress_bar.image = progress_bar.original_image.Scale(progress_bar.original_image.GetWidth(progress_bar.original_image) * progress, progress_bar.original_image.GetHeight());
+        progress_bar.sprite.SetImage(progress_bar.image); // Update the sprite with the scaled image
+    }
+}
+
+# --- Callback functions for various Plymouth events ---
+fun display_normal_callback () { pass; } // Placeholder for normal display callback
+fun display_password_callback () { pass; } // Placeholder for password display callback
+fun quit_callback () { pass; } // Placeholder for quit callback
+
+# --- Callback to display a message ---
+fun display_message_callback(text) {
+    my_image = Image.Text(text, 1, 1, 1); // Create an image from the text
+    message_sprites[message_sprite_count] = Sprite(my_image); // Create a sprite for the text image
+    message_sprites[message_sprite_count].SetPosition(10, message_sprite_y, 10000); // Position the sprite
+    message_sprites[message_sprite_count].text = text; // Store the text in the sprite for reference
+    message_sprite_count++; // Increment the sprite count
+    message_sprite_y += my_image.GetHeight(); // Update the Y position for the next message
+}
+
+# --- Callback to hide a message ---
+fun hide_message_callback(text) {
+    for (i = 0; i < message_sprite_count; i++) {
+        if (message_sprites[i].text == text) { // Find the sprite with the matching text
+            message_sprites[i] = NULL; // Remove the sprite
+        }
+    }
+}
+
+# --- Register the callback functions with Plymouth ---
+Plymouth.SetBootProgressFunction(progress_callback); // Set the progress callback
+Plymouth.SetDisplayNormalFunction(display_normal_callback); // Set the normal display callback
+Plymouth.SetDisplayPasswordFunction(display_password_callback); // Set the password display callback
+Plymouth.SetQuitFunction(quit_callback); // Set the quit callback
+Plymouth.SetDisplayMessageFunction(display_message_callback); // Set the display message callback
+Plymouth.SetHideMessageFunction(hide_message_callback); // Set the hide message callback
+
+# --- Check if Plymouth is in shutdown mode ---
+if (Plymouth.GetMode() == "shutdown") {
+    // Add any shutdown-specific logic here
+}
