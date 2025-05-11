@@ -10,7 +10,7 @@ A SaltStack formula to configure Plymouth boot splash screen with custom themes.
 - Configures GRUB for Plymouth compatibility
 - Sets up custom boot splash themes
 - Includes example theme "mbcom" with:
-  - @MBcom logo
+  - [@MBcom](https://github.com/MBcom) logo
   - Progress bar
   - Message display support
   - Configurable background colors
@@ -56,7 +56,9 @@ plymouth/files/mytheme/
 ├── progress-bar.png
 ├── progress-box.png
 └── mytheme.plymouth
-```
+```  
+  
+I would recommend images not larger than 720 x 350 px.
 
 ## Testing
 
